@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sayısal Loto Oyunu</title>
+   
+  </head>
+  <body>
+    <div class="gameScreen">
+      <h1>Sayısal Loto Oyunu</h1>
+      <p>Aşağıdaki inputlara tahminlerinizi giriniz.</p>
+
+      <form id="guessForm">
+        <input type="number" name="number" min="1" max="49" />
+        <input type="number" name="number" min="1" max="49" />
+        <input type="number" name="number" min="1" max="49" />
+        <input type="number" name="number" min="1" max="49" />
+        <input type="number" name="number" min="1" max="49" />
+        <input type="number" name="number" min="1" max="49" />
+        <button type="button" id="guessButton" onclick="handleGuess()">
+          Tahmin Gir
+        </button>
+      </form>
+
+      <br />
+      <p id="text"></p>
+      <hr />
+      <button disabled id="drawButton" onclick="drawLottery()">
+        Kurayı Çek
+      </button>
+      <p>Loto Sayıları</p>
+
+      <form id="lotteryForm">
+        <input type="number" id="lotto1" class="results" disabled />
+        <input type="number" id="lotto2" class="results" disabled />
+        <input type="number" id="lotto3" class="results" disabled />
+        <input type="number" id="lotto4" class="results" disabled />
+        <input type="number" id="lotto5" class="results" disabled />
+        <input type="number" id="lotto6" class="results" disabled />
+      </form>
+
+      <p id="matchedNumbers"></p>
+      <p id="matchCount"></p>
+      <button class="newGuess" onclick="resetGame()">Yeni Tahmin</button>
+    </div>
+    <script>
+        const allNumberInputs = document.querySelectorAll('input[name="number"]');
+
+allNumberInputs.forEach(input => {
+  input.addEventListener("blur", handleInputBlur);
+});
+
+function handleInputBlur(event) {
+  const input = event.target;
+  const value = Math.floor(parseFloat(input.value));
+
+  if (input.value === "" || isNaN(value) || value < 1 || value > 49) {
+    if (input.value !== "") {
+      alert("1-49 sayıları arasında bir sayı girmelisiniz");
+    }
+    input.value = "";
+    return;
+  }
+
+  input.value = value;
+
+  const inputs = Array.from(allNumberInputs).filter(i => i !== input);
+
+  if (inputs.some(i => Math.floor(parseFloat(i.value)) === value)) {
+    alert("Aynı tahmin bir kez girilebilir.");
+    input.value = "";
+  }
+}
+
+function handleGuess() {
+  const guesses = Array.from(allNumberInputs).map(input =>
+    Math.floor(parseFloat(input.value))
+  );
+
+  if (guesses.some(isNaN)) {
+    alert("Lütfen geçerli 6 adet tahmin giriniz.");
+    return;
+  }
+
+  if (guesses.length !== new Set(guesses).size) {
+    alert("Aynı tahmin bir kez girilebilir.");
+    return;
+  }
+
+  guesses.sort((a, b) => a - b);
+  allNumberInputs.forEach((input, index) => {
+    input.value = guesses[index];
+  });
+
+  document.getElementById("text").innerText = "Tahminler girildi.";
+  document.getElementById("guessButton").disabled = true;
+  document.getElementById("drawButton").disabled = false;
+}
+
+function drawLottery() {
+  const lottoNumbers = [];
+  while (lottoNumbers.length < 6) {
+    const number = Math.floor(Math.random() * 49) + 1;
+    if (!lottoNumbers.includes(number)) {
+      lottoNumbers.push(number);
+    }
+  }
+
+  lottoNumbers.sort((a, b) => a - b);
+  document.querySelectorAll("#lotteryForm input").forEach((input, index) => {
+    input.value = lottoNumbers[index];
+  });
+
+  const guesses = Array.from(allNumberInputs).map(input =>
+    Math.floor(parseFloat(input.value))
+  );
+
+  const matchedNumbers = guesses.filter(num => lottoNumbers.includes(num));
+
+  document.getElementById("matchedNumbers").innerText =
+    "Bilinen Sayılar: " + matchedNumbers.join(", ");
+  document.getElementById("matchCount").innerText =
+    "Kaç Adet Sayı Bildiniz: " + matchedNumbers.length;
+}
+
+function resetGame() {
+  allNumberInputs.forEach(input => (input.value = ""));
+  document.getElementById("guessButton").disabled = false;
+
+  document
+    .querySelectorAll("#lotteryForm input")
+    .forEach(input => (input.value = ""));
+  document.getElementById("drawButton").disabled = true;
+
+  document.getElementById("matchedNumbers").innerText = "";
+  document.getElementById("matchCount").innerText = "";
+  document.getElementById("text").innerText = "";
+}
+    </script>
+   
+   
+  </body>
+</html>

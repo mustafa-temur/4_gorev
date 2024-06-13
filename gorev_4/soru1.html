@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Soru 1</title>
+  </head>
+  <body>
+    <div>
+      1'den 99'a kadar olan sayıları for döngüsü ile yan yana
+      <button onclick="sayilariSirala()" id="sirala">Sırala</button>
+    </div>
+    <br />
+    <button id="rastgeleSayi" onclick="rastgeleSayiEkranaGoster()" disabled>
+      Rastgele sayı seç
+    </button>
+    <br>
+    <div id="ekran">
+    <br>
+    </div>
+
+    <script>
+      const ekranElementi = document.getElementById("ekran");
+
+      function sayilariSirala() {
+        siralaButonunuDevreDisiBirak();
+        rastgeleSayiButonunuEtkinlestir();
+        ekranElementi.innerHTML = "";
+        brElementiOlustur();
+
+        for (let i = 1; i < 100; i++) {
+          spanEkleDiv(i);
+          if (i % 10 === 0) {
+            brElementiOlustur();
+            brElementiOlustur();
+          }
+        }
+      }
+
+      function spanEkleDiv(metin) {
+        const spanElementi = document.createElement("span");
+        spanElementi.classList.add(`num-${metin}`);
+        spanElementi.innerText = metin + " ";
+        ekranElementi.appendChild(spanElementi);
+      }
+
+      function brElementiOlustur() {
+        const brElementi = document.createElement("br");
+        ekranElementi.appendChild(brElementi);
+      }
+
+      function siralaButonunuDevreDisiBirak() {
+        const siralaButonu = document.getElementById("sirala");
+        siralaButonu.disabled = true;
+      }
+
+      function rastgeleSayiButonunuEtkinlestir() {
+        const rastgeleSayiButonu = document.getElementById("rastgeleSayi");
+        rastgeleSayiButonu.disabled = false;
+      }
+
+      function rastgeleSayiUret() {
+        return Math.floor(Math.random() * 99) + 1;
+      }
+
+      function rastgeleSayiEkranaGoster() {
+        const rastgeleSayi = rastgeleSayiUret();
+
+        const spanElementleri = ekranElementi.getElementsByTagName("span");
+        for (let i = 0; i < spanElementleri.length; i++) {
+          if (spanElementleri[i].innerText.trim() === rastgeleSayi.toString()) {
+            spanElementleri[i].style.color = "red";
+            spanElementleri[i].style.fontWeight = "bold";
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
